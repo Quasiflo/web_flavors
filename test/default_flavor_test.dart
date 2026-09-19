@@ -106,6 +106,32 @@ void main() {
         ),
       );
     });
+
+    test('lists logical names with prefix at root', () {
+      _writePubspec(
+        project,
+        'name: demo\nweb_flavors:\n'
+        '  flavors-dir:\n'
+        '  flavor-prefix: web-\n',
+      );
+      Directory(p.join(project.path, 'web-staging')).createSync();
+      final config = WebFlavorsConfig.fromPubspec(project);
+
+      expect(
+        () => resolveFlavor(
+          explicit: null,
+          projectRoot: project,
+          config: config,
+        ),
+        throwsA(
+          isA<UsageException>().having(
+            (e) => e.message,
+            'message',
+            allOf(contains('staging'), isNot(contains('web-staging'))),
+          ),
+        ),
+      );
+    });
   });
 }
 

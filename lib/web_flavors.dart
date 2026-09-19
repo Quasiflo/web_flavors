@@ -5,6 +5,7 @@
 library;
 
 export 'src/command.dart';
+export 'src/config.dart';
 export 'src/dart_defines.dart';
 export 'src/default_flavor.dart';
 export 'src/fabrication.dart';

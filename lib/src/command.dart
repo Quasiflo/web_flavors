@@ -62,15 +62,25 @@ String get usage => '''
 Flavor support for Flutter web.
 
 WARNING: web/ is deleted and re-fabricated on every run. Never edit it by
-hand and keep it gitignored. Edit web-flavors/common/ and
-web-flavors/<flavor>/ instead.
+hand and keep it gitignored. Edit the shared and per-flavor source
+directories instead (see configuration below).
 
 Usage: web_flavors [<flavor>] [options] -- <flutter args...>
 
-  <flavor>  Name of a directory under web-flavors/ (e.g. dev, prod).
+  <flavor>  Name of a flavor directory (e.g. dev, prod).
             When omitted, the `flutter: default-flavor:` value from the
             project's pubspec.yaml is used.
   --        Separates web_flavors args from args forwarded to flutter.
+
+Configuration (project pubspec.yaml, `web_flavors:` section):
+
+  flavors-dir: web-flavors   Default container; null means the project root
+                             (nested paths allowed).
+  flavor-prefix: web-        Directory prefix; `web-staging/` with prefix
+                             `web-` is flavor `staging` (not applied to the
+                             shared directory).
+  common-dir: common         Shared directory name; set to `web-common` to
+                             match a `web-` prefixed layout.
 
 Examples:
   web_flavors dev -- build web
@@ -79,8 +89,8 @@ Examples:
   web_flavors dev -- run -d chrome
 
 ${wrapperArgParser.usage}
-The wrapper copies web-flavors/common/ into web/, overlays
-web-flavors/<flavor>/ on top, injects --dart-define=WEB_APP_FLAVOR=<flavor>,
+The wrapper copies the shared directory into web/, overlays
+<flavor>/ on top, injects --dart-define=WEB_APP_FLAVOR=<flavor>,
 then runs flutter with the remaining args. The exit code is flutter's.
 ''';
 

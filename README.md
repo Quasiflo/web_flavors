@@ -23,6 +23,41 @@ flutter:
   default-flavor: prod
 ```
 
+## Configuration
+
+The defaults are `web-flavors/` as the container, no prefix, and `common`
+as the shared directory. Override them with a `web_flavors:` section in the
+project's pubspec.yaml:
+
+```yaml
+web_flavors:
+  flavors-dir: web-flavors # alternate container (nested paths allowed)
+  flavor-prefix: "" # directory prefix; "" means no prefix
+  common-dir: common # shared directory name; the prefix is not applied
+```
+
+Set `flavors-dir` to null to keep flavor directories directly at the
+project root, and combine it with a prefix and matching common dir so they
+stay recognizable:
+
+```yaml
+web_flavors:
+  flavors-dir:
+  flavor-prefix: web-
+  common-dir: web-common
+```
+
+```text
+web-common/   # shared files
+web-dev/      # flavor `dev`
+web-prod/     # flavor `prod`
+web/          # fabricated, never hand-edited
+```
+
+The explicit `<flavor>` argument always names the logical flavor
+(`staging`, never `web-staging`). The generated `web/` directory is never
+treated as a flavor.
+
 ## How it works
 
 Given a project layout of:

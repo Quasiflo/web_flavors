@@ -16,14 +16,19 @@ Future<void> main(List<String> args) async {
       stdout.writeln(packageVersion);
       return;
     }
+    final projectRoot = Directory.current;
+    final config = WebFlavorsConfig.fromPubspec(projectRoot);
     final flavor = resolveFlavor(
       explicit: command.flavor,
-      projectRoot: Directory.current,
+      projectRoot: projectRoot,
+      config: config,
     );
     fabricateWeb(
-      flavorsDir: flavorsDirOf(Directory.current),
-      webDir: webDirOf(Directory.current),
+      flavorsDir: containerDirOf(projectRoot, config),
+      webDir: webDirOf(projectRoot),
       flavor: flavor,
+      flavorPrefix: config.flavorPrefix,
+      commonDir: config.commonDir,
     );
     final flutterArgs = withFlavorDefine(command.flutterArgs, flavor);
     final process = await Process.start(

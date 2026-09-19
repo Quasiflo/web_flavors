@@ -4,6 +4,7 @@ import 'package:path/path.dart' as p;
 import 'package:yaml/yaml.dart';
 
 import 'command.dart';
+import 'config.dart';
 import 'fabrication.dart';
 
 /// Standard pubspec key naming the flavor used when none is passed
@@ -44,15 +45,25 @@ String? defaultFlavorFromPubspec(Directory projectRoot) {
 
 /// Resolves the flavor to use: [explicit] wins, otherwise the pubspec
 /// default, otherwise a [UsageException] listing available flavors.
+///
+/// Available flavors are listed from [config]'s container directory with
+/// its prefix applied.
 String resolveFlavor({
   required String? explicit,
   required Directory projectRoot,
+  WebFlavorsConfig config = WebFlavorsConfig.defaults,
 }) {
   final flavor = explicit ?? defaultFlavorFromPubspec(projectRoot);
   if (flavor != null) return flavor;
-  final available = listFlavors(flavorsDirOf(projectRoot));
+  final container = containerDirOf(projectRoot, config);
+  final available = visibleFlavors(
+    container,
+    webDirOf(projectRoot),
+    config.flavorPrefix,
+    config.commonDir,
+  );
   final hint = available.isEmpty
-      ? 'No flavors found under web-flavors/.'
+      ? 'No flavors found.'
       : 'Available flavors: ${available.join(', ')}.';
   throw UsageException(
     'No <flavor> given and no `flutter: $defaultFlavorKey:` in pubspec.yaml. '

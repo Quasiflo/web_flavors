@@ -130,6 +130,129 @@ void main() {
     test('missing directory yields no flavors', () {
       expect(listFlavors(Directory('/does/not/exist')), isEmpty);
     });
+
+    test('strips prefix and ignores the rest', () {
+      final project = Directory.systemTemp.createTempSync('web_flavors_test.');
+      addTearDown(() => project.deleteSync(recursive: true));
+      final flavors = Directory(p.join(project.path, 'web-flavors'))
+        ..createSync();
+      for (final name in ['web-prod', 'web-common', 'web-', 'unrelated']) {
+        Directory(p.join(flavors.path, name)).createSync();
+      }
+
+      expect(
+        listFlavors(flavors, 'web-', 'web-common'),
+        ['prod'],
+      );
+    });
+  });
+
+  group('fabricateWeb with prefix', () {
+    late Directory project;
+    late Directory flavorsDir;
+    late Directory webDir;
+
+    setUp(() {
+      project = Directory.systemTemp.createTempSync('web_flavors_test.');
+      flavorsDir = Directory(p.join(project.path, 'web-flavors'))..createSync();
+      webDir = Directory(p.join(project.path, 'web'));
+      _writeFile(flavorsDir, 'common/index.html', 'common');
+      _writeFile(flavorsDir, 'web-dev/index.html', 'dev');
+    });
+
+    tearDown(() {
+      if (project.existsSync()) project.deleteSync(recursive: true);
+    });
+
+    test('overlays the prefixed flavor on unprefixed common', () {
+      fabricateWeb(
+        flavorsDir: flavorsDir,
+        webDir: webDir,
+        flavor: 'dev',
+        flavorPrefix: 'web-',
+      );
+
+      expect(webDir.childFile('index.html').readAsStringSync(), 'dev');
+    });
+
+    test('supports a custom common dir', () {
+      _writeFile(flavorsDir, 'web-common/shared.js', 'shared');
+      fabricateWeb(
+        flavorsDir: flavorsDir,
+        webDir: webDir,
+        flavor: 'dev',
+        flavorPrefix: 'web-',
+        commonDir: 'web-common',
+      );
+
+      expect(webDir.childFile('index.html').readAsStringSync(), 'dev');
+      expect(webDir.childFile('shared.js').readAsStringSync(), 'shared');
+    });
+
+    test('unknown flavor lists logical names', () {
+      expect(
+        () => fabricateWeb(
+          flavorsDir: flavorsDir,
+          webDir: webDir,
+          flavor: 'prod',
+          flavorPrefix: 'web-',
+        ),
+        throwsA(
+          isA<UsageException>().having(
+            (e) => e.message,
+            'message',
+            allOf(
+              contains('web-prod'),
+              contains('Available flavors: dev'),
+            ),
+          ),
+        ),
+      );
+    });
+  });
+
+  group('fabricateWeb at project root', () {
+    test('generated web/ is not listed as a flavor', () {
+      final project = Directory.systemTemp.createTempSync('web_flavors_test.');
+      addTearDown(() => project.deleteSync(recursive: true));
+      final webDir = Directory(p.join(project.path, 'web'))..createSync();
+
+      expect(
+        () => fabricateWeb(
+          flavorsDir: project,
+          webDir: webDir,
+          flavor: 'dev',
+        ),
+        throwsA(
+          isA<UsageException>().having(
+            (e) => e.message,
+            'message',
+            contains('No flavors found.'),
+          ),
+        ),
+      );
+    });
+
+    test('flavor resolving to the output directory throws', () {
+      final project = Directory.systemTemp.createTempSync('web_flavors_test.');
+      addTearDown(() => project.deleteSync(recursive: true));
+      final webDir = Directory(p.join(project.path, 'web'))..createSync();
+
+      expect(
+        () => fabricateWeb(
+          flavorsDir: project,
+          webDir: webDir,
+          flavor: 'web',
+        ),
+        throwsA(
+          isA<UsageException>().having(
+            (e) => e.message,
+            'message',
+            contains('output directory'),
+          ),
+        ),
+      );
+    });
   });
 }
 
