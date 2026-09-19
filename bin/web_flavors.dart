@@ -2,22 +2,30 @@ import 'dart:io';
 
 import 'package:web_flavors/web_flavors.dart';
 
-/// Fabricates `web/` for `<flavor>`, then runs `flutter` with the rest.
+/// Fabricates `web/` for the flavor, then runs `flutter` with the rest.
 ///
-/// Usage: `web_flavors <flavor> -- <flutter args...>`
+/// Usage: `web_flavors [<flavor>] [options] -- <flutter args...>`
 Future<void> main(List<String> args) async {
-  if (isHelpRequest(args)) {
-    stdout.write(usage);
-    return;
-  }
   try {
-    final command = parseArgs(args);
+    final command = parseWrapperArgs(args);
+    if (command.showHelp) {
+      stdout.write(usage);
+      return;
+    }
+    if (command.showVersion) {
+      stdout.writeln(packageVersion);
+      return;
+    }
+    final flavor = resolveFlavor(
+      explicit: command.flavor,
+      projectRoot: Directory.current,
+    );
     fabricateWeb(
       flavorsDir: flavorsDirOf(Directory.current),
       webDir: webDirOf(Directory.current),
-      flavor: command.flavor,
+      flavor: flavor,
     );
-    final flutterArgs = withFlavorDefine(command.flutterArgs, command.flavor);
+    final flutterArgs = withFlavorDefine(command.flutterArgs, flavor);
     final process = await Process.start(
       'flutter',
       flutterArgs,

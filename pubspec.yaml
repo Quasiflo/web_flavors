@@ -17,7 +17,9 @@ executables:
   web_flavors:
 
 dependencies:
+  args: ^2.7.0
   path: ^1.9.0
+  yaml: ^3.1.0
 
 dev_dependencies:
   flutter_lints: ^6.0.0

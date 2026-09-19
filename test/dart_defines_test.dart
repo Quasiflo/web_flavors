@@ -1,4 +1,5 @@
 import 'package:test/test.dart';
+import 'package:web_flavors/flavor.dart';
 import 'package:web_flavors/web_flavors.dart';
 
 void main() {
@@ -43,10 +44,20 @@ void main() {
     });
   });
 
-  group('WebAppFlavor', () {
-    test('exposes the define key and current value', () {
-      expect(WebAppFlavor.defineKey, 'WEB_APP_FLAVOR');
-      expect(WebAppFlavor.current, isA<String>());
+  group('webAppFlavor', () {
+    test('is null when no flavor was injected', () {
+      // Tests run without --dart-define, so the flavor is unset.
+      expect(webAppFlavor, isNull);
+    });
+
+    test('define key matches the injected key', () {
+      expect(flavorDefineKey, 'WEB_APP_FLAVOR');
+    });
+  });
+
+  group('packageVersion', () {
+    test('looks like a version', () {
+      expect(packageVersion, matches(RegExp(r'^\d+\.\d+\.\d+')));
     });
   });
 }
