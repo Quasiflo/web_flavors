@@ -1,0 +1,11 @@
+.packages
+.dart_tool/
+.pub/
+.idea/
+build/
+pubspec.lock
+doc/api/
+.DS_Store
+.rumdl_cache
+.vscode/mise-tools
+.config/miserc.toml
