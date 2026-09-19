@@ -1,0 +1,24 @@
+name: web_flavors
+description: Flavor support for Flutter web. A tiny wrapper CLI that fabricates
+  web/ from web-flavors/common plus a per-flavor overlay, then forwards to flutter.
+version: 0.0.1
+homepage: https://github.com/Quasiflo/web_flavors
+repository: https://github.com/Quasiflo/web_flavors
+issue_tracker: https://github.com/Quasiflo/web_flavors/issues
+topics:
+  - flutter
+  - web
+  - flavors
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+
+executables:
+  web_flavors:
+
+dependencies:
+  path: ^1.9.0
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  test: ^1.25.0
