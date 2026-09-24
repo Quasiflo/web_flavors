@@ -13,7 +13,9 @@ void main() {
     });
 
     tearDown(() {
-      if (project.existsSync()) project.deleteSync(recursive: true);
+      if (project.existsSync()) {
+        project.deleteSync(recursive: true);
+      }
     });
 
     test('defaults without pubspec.yaml', () {
@@ -94,7 +96,7 @@ void main() {
         () => WebFlavorsConfig.fromPubspec(project),
         throwsA(
           isA<UsageException>().having(
-            (e) => e.message,
+            (final e) => e.message,
             'message',
             contains('flavors-dir'),
           ),
@@ -193,11 +195,8 @@ void main() {
   });
 }
 
-final Matcher _isDefaults = isA<WebFlavorsConfig>()
-    .having((c) => c.flavorsDir, 'flavorsDir', 'web-flavors')
-    .having((c) => c.flavorPrefix, 'flavorPrefix', isEmpty)
-    .having((c) => c.commonDir, 'commonDir', 'common');
+final Matcher _isDefaults = isA<WebFlavorsConfig>().having((final c) => c.flavorsDir, 'flavorsDir', 'web-flavors').having((final c) => c.flavorPrefix, 'flavorPrefix', isEmpty).having((final c) => c.commonDir, 'commonDir', 'common');
 
-void _writePubspec(Directory project, String content) {
+void _writePubspec(final Directory project, final String content) {
   File(p.join(project.path, 'pubspec.yaml')).writeAsStringSync(content);
 }

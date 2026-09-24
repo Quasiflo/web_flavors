@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 
-import 'command.dart';
-import 'config.dart';
+import 'package:web_flavors/src/command.dart';
+import 'package:web_flavors/src/config.dart';
 
 /// Name of the shared directory (before any configured prefix is applied).
 const commonDirName = 'common';
@@ -14,42 +14,50 @@ const commonDirName = 'common';
 final RegExp flavorNamePattern = RegExp(r'^[A-Za-z0-9][A-Za-z0-9_-]*$');
 
 /// Whether [name] is usable as a flavor directory name.
-bool isValidFlavorName(String name) => flavorNamePattern.hasMatch(name);
+bool isValidFlavorName(final String name) => flavorNamePattern.hasMatch(name);
 
 /// The `web-flavors/` directory inside [projectRoot].
-Directory flavorsDirOf(Directory projectRoot) =>
-    Directory(p.join(projectRoot.path, 'web-flavors'));
+Directory flavorsDirOf(final Directory projectRoot) => Directory(p.join(projectRoot.path, 'web-flavors'));
 
 /// The flavors container: [config]'s `flavors-dir` under [projectRoot],
 /// or [projectRoot] itself when flavors live at the workspace root.
 Directory containerDirOf(
-  Directory projectRoot, [
-  WebFlavorsConfig config = WebFlavorsConfig.defaults,
+  final Directory projectRoot, [
+  final WebFlavorsConfig config = WebFlavorsConfig.defaults,
 ]) {
   final dir = config.flavorsDir;
-  if (dir == null) return projectRoot;
+  if (dir == null) {
+    return projectRoot;
+  }
   return Directory(p.join(projectRoot.path, dir));
 }
 
 /// The `web/` directory inside [projectRoot].
-Directory webDirOf(Directory projectRoot) =>
-    Directory(p.join(projectRoot.path, 'web'));
+Directory webDirOf(final Directory projectRoot) => Directory(p.join(projectRoot.path, 'web'));
 
 /// Available flavors: subdirectories of [flavorsDir] matching
 /// [flavorPrefix], with the prefix stripped and the shared directory
 /// ([commonDir], prefix not applied) excluded.
 List<String> listFlavors(
-  Directory flavorsDir, [
-  String flavorPrefix = '',
-  String commonDir = commonDirName,
+  final Directory flavorsDir, [
+  final String flavorPrefix = '',
+  final String commonDir = commonDirName,
 ]) {
-  if (!flavorsDir.existsSync()) return const [];
+  if (!flavorsDir.existsSync()) {
+    return const [];
+  }
   final names = <String>[];
   for (final entity in flavorsDir.listSync(followLinks: false)) {
-    if (entity is! Directory) continue;
+    if (entity is! Directory) {
+      continue;
+    }
     final dirname = p.basename(entity.path);
-    if (dirname == commonDir) continue;
-    if (!dirname.startsWith(flavorPrefix)) continue;
+    if (dirname == commonDir) {
+      continue;
+    }
+    if (!dirname.startsWith(flavorPrefix)) {
+      continue;
+    }
     final logical = dirname.substring(flavorPrefix.length);
     if (logical.isEmpty || !isValidFlavorName(logical)) {
       continue;
@@ -63,15 +71,15 @@ List<String> listFlavors(
 /// Flavor names visible in [flavorsDir], excluding [outputDir] when it lives
 /// directly inside (root mode would otherwise list the generated `web/`).
 Iterable<String> visibleFlavors(
-  Directory flavorsDir,
-  Directory outputDir, [
-  String flavorPrefix = '',
-  String commonDir = commonDirName,
+  final Directory flavorsDir,
+  final Directory outputDir, [
+  final String flavorPrefix = '',
+  final String commonDir = commonDirName,
 ]) {
   final nested = p.equals(p.dirname(outputDir.path), flavorsDir.path);
   final outputName = p.basename(outputDir.path);
   return listFlavors(flavorsDir, flavorPrefix, commonDir).where(
-    (name) => !(nested && name == outputName),
+    (final name) => !(nested && name == outputName),
   );
 }
 
@@ -86,12 +94,12 @@ Iterable<String> visibleFlavors(
 /// Throws a [UsageException] for invalid input or project layout.
 /// [log] receives non-fatal notes (e.g. a missing shared directory).
 void fabricateWeb({
-  required Directory flavorsDir,
-  required Directory webDir,
-  required String flavor,
-  String flavorPrefix = '',
-  String commonDir = commonDirName,
-  void Function(String message)? log,
+  required final Directory flavorsDir,
+  required final Directory webDir,
+  required final String flavor,
+  final String flavorPrefix = '',
+  final String commonDir = commonDirName,
+  final void Function(String message)? log,
 }) {
   if (!isValidFlavorName(flavor)) {
     throw UsageException(
@@ -120,22 +128,26 @@ void fabricateWeb({
       flavorPrefix,
       commonDir,
     );
-    final hint = available.isEmpty
-        ? 'No flavors found.'
-        : 'Available flavors: ${available.join(', ')}.';
+    final hint = available.isEmpty ? 'No flavors found.' : 'Available flavors: ${available.join(', ')}.';
     throw UsageException(
       'Unknown flavor "$flavor" (no ${flavorDir.path}/ directory). $hint',
     );
   }
 
-  if (webDir.existsSync()) webDir.deleteSync(recursive: true);
+  if (webDir.existsSync()) {
+    webDir.deleteSync(recursive: true);
+  }
   webDir.createSync(recursive: true);
 
   final sharedDir = Directory(p.join(flavorsDir.path, commonDir));
   if (sharedDir.existsSync()) {
     copyDirectory(sharedDir, webDir);
+  } else if (log != null) {
+    log(
+      'web_flavors: no ${sharedDir.path}/ directory, using "$flavor" only.',
+    );
   } else {
-    (log ?? stderr.writeln)(
+    stderr.writeln(
       'web_flavors: no ${sharedDir.path}/ directory, using "$flavor" only.',
     );
   }
@@ -143,7 +155,7 @@ void fabricateWeb({
 }
 
 /// Recursively copies [source] into [destination], overwriting conflicts.
-void copyDirectory(Directory source, Directory destination) {
+void copyDirectory(final Directory source, final Directory destination) {
   for (final entity in source.listSync(recursive: true, followLinks: false)) {
     final relative = p.relative(entity.path, from: source.path);
     final target = p.join(destination.path, relative);

@@ -1,9 +1,8 @@
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
+import 'package:web_flavors/src/command.dart';
 import 'package:yaml/yaml.dart';
-
-import 'command.dart';
 
 /// Pubspec section holding wrapper configuration (`web_flavors:`).
 const configKey = 'web_flavors';
@@ -33,6 +32,55 @@ class WebFlavorsConfig {
     required this.commonDir,
   });
 
+  /// Reads the `web_flavors:` section from the pubspec.yaml in
+  /// [projectRoot], merged over [defaults].
+  ///
+  /// Throws a [UsageException] when the section exists but is invalid.
+  factory WebFlavorsConfig.fromPubspec(final Directory projectRoot) {
+    final file = File(p.join(projectRoot.path, 'pubspec.yaml'));
+    if (!file.existsSync()) {
+      return defaults;
+    }
+
+    late final Object? document;
+    try {
+      document = loadYaml(file.readAsStringSync());
+    } on FormatException catch (error) {
+      throw UsageException(
+        'Could not parse ${file.path} for $configKey configuration: '
+        '${error.message}',
+      );
+    }
+    if (document is! YamlMap) {
+      throw UsageException(
+        'Could not parse ${file.path}: expected a mapping.',
+      );
+    }
+    final section = document[configKey];
+    if (section == null) {
+      return defaults;
+    }
+    if (section is! YamlMap) {
+      throw UsageException(
+        'Invalid `$configKey` in ${file.path}: expected a mapping.',
+      );
+    }
+    for (final key in section.keys) {
+      if (key != flavorsDirKey && key != flavorPrefixKey && key != commonDirKey) {
+        throw UsageException(
+          'Unknown `$configKey` key "$key" in ${file.path}: '
+          'expected `$flavorsDirKey`, `$flavorPrefixKey` '
+          'and/or `$commonDirKey`.',
+        );
+      }
+    }
+    return WebFlavorsConfig(
+      flavorsDir: _parseFlavorsDir(section[flavorsDirKey], file.path),
+      flavorPrefix: _parseFlavorPrefix(section[flavorPrefixKey], file.path),
+      commonDir: _parseCommonDir(section[commonDirKey], file.path),
+    );
+  }
+
   /// Configuration used when the project has no `web_flavors:` section.
   static const defaults = WebFlavorsConfig(
     flavorsDir: 'web-flavors',
@@ -52,55 +100,10 @@ class WebFlavorsConfig {
   /// Name of the shared directory inside the container.
   final String commonDir;
 
-  /// Reads the `web_flavors:` section from the pubspec.yaml in
-  /// [projectRoot], merged over [defaults].
-  ///
-  /// Throws a [UsageException] when the section exists but is invalid.
-  static WebFlavorsConfig fromPubspec(Directory projectRoot) {
-    final file = File(p.join(projectRoot.path, 'pubspec.yaml'));
-    if (!file.existsSync()) return defaults;
-
-    late final Object? document;
-    try {
-      document = loadYaml(file.readAsStringSync());
-    } on FormatException catch (error) {
-      throw UsageException(
-        'Could not parse ${file.path} for $configKey configuration: '
-        '${error.message}',
-      );
+  static String? _parseFlavorsDir(final Object? value, final String pubspecPath) {
+    if (value == null) {
+      return null;
     }
-    if (document is! YamlMap) {
-      throw UsageException(
-        'Could not parse ${file.path}: expected a mapping.',
-      );
-    }
-    final section = document[configKey];
-    if (section == null) return defaults;
-    if (section is! YamlMap) {
-      throw UsageException(
-        'Invalid `$configKey` in ${file.path}: expected a mapping.',
-      );
-    }
-    for (final key in section.keys) {
-      if (key != flavorsDirKey &&
-          key != flavorPrefixKey &&
-          key != commonDirKey) {
-        throw UsageException(
-          'Unknown `$configKey` key "$key" in ${file.path}: '
-          'expected `$flavorsDirKey`, `$flavorPrefixKey` '
-          'and/or `$commonDirKey`.',
-        );
-      }
-    }
-    return WebFlavorsConfig(
-      flavorsDir: _parseFlavorsDir(section[flavorsDirKey], file.path),
-      flavorPrefix: _parseFlavorPrefix(section[flavorPrefixKey], file.path),
-      commonDir: _parseCommonDir(section[commonDirKey], file.path),
-    );
-  }
-
-  static String? _parseFlavorsDir(Object? value, String pubspecPath) {
-    if (value == null) return null;
     if (value is String) {
       if (value.isEmpty) {
         throw UsageException(
@@ -109,7 +112,9 @@ class WebFlavorsConfig {
         );
       }
       final normalized = p.normalize(value);
-      if (normalized == '.') return null;
+      if (normalized == '.') {
+        return null;
+      }
       if (p.isAbsolute(value) || normalized.startsWith('..')) {
         throw UsageException(
           'Invalid `$flavorsDirKey` "$value" in $pubspecPath: '
@@ -124,8 +129,10 @@ class WebFlavorsConfig {
     );
   }
 
-  static String _parseFlavorPrefix(Object? value, String pubspecPath) {
-    if (value == null) return defaults.flavorPrefix;
+  static String _parseFlavorPrefix(final Object? value, final String pubspecPath) {
+    if (value == null) {
+      return defaults.flavorPrefix;
+    }
     if (value is! String || value.contains('/') || value.contains(r'\')) {
       throw UsageException(
         'Invalid `$flavorPrefixKey` in $pubspecPath: '
@@ -135,12 +142,11 @@ class WebFlavorsConfig {
     return value;
   }
 
-  static String _parseCommonDir(Object? value, String pubspecPath) {
-    if (value == null) return defaults.commonDir;
-    if (value is! String ||
-        value.isEmpty ||
-        value.contains('/') ||
-        value.contains(r'\')) {
+  static String _parseCommonDir(final Object? value, final String pubspecPath) {
+    if (value == null) {
+      return defaults.commonDir;
+    }
+    if (value is! String || value.isEmpty || value.contains('/') || value.contains(r'\')) {
       throw UsageException(
         'Invalid `$commonDirKey` in $pubspecPath: '
         'expected a plain directory name such as "common".',

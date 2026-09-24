@@ -1,4 +1,5 @@
-# web_flavors
+# Web_flavors
+
 Flavor Support for Flutter Web
 
 `flutter build web --flavor <name>` is rejected by the Flutter tool, so web
@@ -58,7 +59,7 @@ The explicit `<flavor>` argument always names the logical flavor
 (`staging`, never `web-staging`). The generated `web/` directory is never
 treated as a flavor.
 
-## How it works
+## How It Works
 
 Given a project layout of:
 
@@ -86,7 +87,7 @@ flutter flags. If your forwarded args already define `WEB_APP_FLAVOR`, the
 wrapper errors out instead of silently desyncing `web/` from Dart code.
 `--help` prints usage and `--version` prints the package version.
 
-## ⚠️ `web/` is volatile
+## ⚠ `web/` Is Volatile
 
 `web/` is deleted and re-fabricated on **every** run. Never edit it by hand:
 
@@ -98,7 +99,7 @@ wrapper errors out instead of silently desyncing `web/` from Dart code.
 - `flutter create . --platforms web` regenerates into `web/`; merge anything
   you want to keep back into `web-flavors/` afterwards.
 
-## Reading the flavor in app code
+## Reading the Flavor in App Code
 
 The wrapper injects `--dart-define=WEB_APP_FLAVOR=<flavor>` on every run.
 Read it via the dedicated entry point (which exposes nothing else):
@@ -116,7 +117,7 @@ const raw = String.fromEnvironment('WEB_APP_FLAVOR');
 const flavor = raw == '' ? null : raw;
 ```
 
-## Why a wrapper instead of hooks?
+## Why a Wrapper Instead of Hooks?
 
 Dart build hooks (`hook/build.dart`) cannot intercept or consume flutter's
 `--flavor` flag, run at the wrong phase to mutate `web/` (which the Flutter
@@ -125,3 +126,15 @@ builds at all. This is the same conclusion `flutter_rust_bridge` reached:
 its native-assets hooks cover mobile/desktop, while web needs an explicit
 `build-web` step outside `flutter`. See
 [flutter/flutter#138992](https://github.com/flutter/flutter/issues/138992).
+
+## License
+
+This repository is licensed under the Apache License 2.0.
+
+- **Copyright (c) 2026 Quasiflo**
+- **Permission Granted:** You are free to use, copy, modify, distribute, and sublicense this software, including for commercial purposes, subject to the terms of the license.
+- **Conditions:** You must include the original copyright notice and a copy of the license in any distribution, clearly state any significant changes made to the original files, and retain any attribution notices from a NOTICE file (if present).
+- **Patent Grant:** Contributors grant a patent license covering their contributions. This patent license terminates if you institute patent litigation alleging that the Work (or a Contribution) infringes a patent.
+- **No Warranty:** This software is provided "as is," without warranties or conditions of any kind, express or implied.
+
+See the [LICENSE](LICENSE) file for the full legal text.

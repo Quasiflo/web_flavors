@@ -1,14 +1,4 @@
-include: package:flutter_lints/flutter.yaml
-
-analyzer:
-  exclude:
-    - build/**
-    - android/**
-    - ios/**
-    - web/**
-    - windows/**
-    - macos/**
-    - linux/**
-
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
+---
+# Additional information about this file can be found at https://dart.dev/tools/analysis
+#* This package uses Quasiflo's standard linting rules, found at https://github.com/Quasiflo/quasiflo_lints
+include: package:quasiflo_lints/lints.yaml

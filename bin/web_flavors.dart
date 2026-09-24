@@ -5,7 +5,7 @@ import 'package:web_flavors/web_flavors.dart';
 /// Fabricates `web/` for the flavor, then runs `flutter` with the rest.
 ///
 /// Usage: `web_flavors [<flavor>] [options] -- <flutter args...>`
-Future<void> main(List<String> args) async {
+Future<void> main(final List<String> args) async {
   try {
     final command = parseWrapperArgs(args);
     if (command.showHelp) {
@@ -39,8 +39,9 @@ Future<void> main(List<String> args) async {
     );
     exit(await process.exitCode);
   } on UsageException catch (error) {
-    stderr.writeln('web_flavors: ${error.message}');
-    stderr.write(usage);
+    stderr
+      ..writeln('web_flavors: ${error.message}')
+      ..write(usage);
     exit(error.exitCode);
   } on ProcessException catch (error) {
     stderr.writeln('web_flavors: failed to run flutter: ${error.message}');

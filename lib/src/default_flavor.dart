@@ -1,11 +1,10 @@
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
+import 'package:web_flavors/src/command.dart';
+import 'package:web_flavors/src/config.dart';
+import 'package:web_flavors/src/fabrication.dart';
 import 'package:yaml/yaml.dart';
-
-import 'command.dart';
-import 'config.dart';
-import 'fabrication.dart';
 
 /// Standard pubspec key naming the flavor used when none is passed
 /// (`flutter: default-flavor: <name>`).
@@ -16,9 +15,11 @@ const defaultFlavorKey = 'default-flavor';
 ///
 /// Throws a [UsageException] when the file exists but cannot be parsed or
 /// the value is not a usable string.
-String? defaultFlavorFromPubspec(Directory projectRoot) {
+String? defaultFlavorFromPubspec(final Directory projectRoot) {
   final file = File(p.join(projectRoot.path, 'pubspec.yaml'));
-  if (!file.existsSync()) return null;
+  if (!file.existsSync()) {
+    return null;
+  }
 
   late final Object? document;
   try {
@@ -29,11 +30,17 @@ String? defaultFlavorFromPubspec(Directory projectRoot) {
       '${error.message}',
     );
   }
-  if (document is! YamlMap) return null;
+  if (document is! YamlMap) {
+    return null;
+  }
   final flutter = document['flutter'];
-  if (flutter is! YamlMap) return null;
+  if (flutter is! YamlMap) {
+    return null;
+  }
   final value = flutter[defaultFlavorKey];
-  if (value == null) return null;
+  if (value == null) {
+    return null;
+  }
   if (value is! String || value.isEmpty) {
     throw UsageException(
       'Invalid `$defaultFlavorKey` in ${file.path}: '
@@ -49,12 +56,14 @@ String? defaultFlavorFromPubspec(Directory projectRoot) {
 /// Available flavors are listed from [config]'s container directory with
 /// its prefix applied.
 String resolveFlavor({
-  required String? explicit,
-  required Directory projectRoot,
-  WebFlavorsConfig config = WebFlavorsConfig.defaults,
+  required final String? explicit,
+  required final Directory projectRoot,
+  final WebFlavorsConfig config = WebFlavorsConfig.defaults,
 }) {
   final flavor = explicit ?? defaultFlavorFromPubspec(projectRoot);
-  if (flavor != null) return flavor;
+  if (flavor != null) {
+    return flavor;
+  }
   final container = containerDirOf(projectRoot, config);
   final available = visibleFlavors(
     container,
@@ -62,9 +71,7 @@ String resolveFlavor({
     config.flavorPrefix,
     config.commonDir,
   );
-  final hint = available.isEmpty
-      ? 'No flavors found.'
-      : 'Available flavors: ${available.join(', ')}.';
+  final hint = available.isEmpty ? 'No flavors found.' : 'Available flavors: ${available.join(', ')}.';
   throw UsageException(
     'No <flavor> given and no `flutter: $defaultFlavorKey:` in pubspec.yaml. '
     '$hint',

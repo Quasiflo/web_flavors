@@ -101,7 +101,7 @@ then runs flutter with the remaining args. The exit code is flutter's.
 /// Throws a [UsageException] when wrapper flags are invalid, more than one
 /// flavor operand is given, or (for non-help/version requests) no `--`
 /// separator with flutter args is present.
-WrapperCommand parseWrapperArgs(List<String> argv) {
+WrapperCommand parseWrapperArgs(final List<String> argv) {
   final separator = argv.indexOf('--');
   final head = separator == -1 ? argv : argv.sublist(0, separator);
   final flutterArgs = separator == -1

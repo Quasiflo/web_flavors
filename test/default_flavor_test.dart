@@ -13,7 +13,9 @@ void main() {
     });
 
     tearDown(() {
-      if (project.existsSync()) project.deleteSync(recursive: true);
+      if (project.existsSync()) {
+        project.deleteSync(recursive: true);
+      }
     });
 
     test('reads flutter: default-flavor', () {
@@ -72,7 +74,9 @@ void main() {
     });
 
     tearDown(() {
-      if (project.existsSync()) project.deleteSync(recursive: true);
+      if (project.existsSync()) {
+        project.deleteSync(recursive: true);
+      }
     });
 
     test('explicit flavor wins over pubspec default', () {
@@ -99,7 +103,7 @@ void main() {
         () => resolveFlavor(explicit: null, projectRoot: project),
         throwsA(
           isA<UsageException>().having(
-            (e) => e.message,
+            (final e) => e.message,
             'message',
             contains('dev'),
           ),
@@ -125,7 +129,7 @@ void main() {
         ),
         throwsA(
           isA<UsageException>().having(
-            (e) => e.message,
+            (final e) => e.message,
             'message',
             allOf(contains('staging'), isNot(contains('web-staging'))),
           ),
@@ -135,6 +139,6 @@ void main() {
   });
 }
 
-void _writePubspec(Directory project, String content) {
+void _writePubspec(final Directory project, final String content) {
   File(p.join(project.path, 'pubspec.yaml')).writeAsStringSync(content);
 }

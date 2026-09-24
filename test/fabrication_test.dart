@@ -37,7 +37,9 @@ void main() {
     });
 
     tearDown(() {
-      if (project.existsSync()) project.deleteSync(recursive: true);
+      if (project.existsSync()) {
+        project.deleteSync(recursive: true);
+      }
     });
 
     test('overlays flavor on top of common', () {
@@ -81,7 +83,7 @@ void main() {
         ),
         throwsA(
           isA<UsageException>().having(
-            (e) => e.message,
+            (final e) => e.message,
             'message',
             contains('dev'),
           ),
@@ -118,8 +120,7 @@ void main() {
     test('excludes common and sorts', () {
       final project = Directory.systemTemp.createTempSync('web_flavors_test.');
       addTearDown(() => project.deleteSync(recursive: true));
-      final flavors = Directory(p.join(project.path, 'web-flavors'))
-        ..createSync();
+      final flavors = Directory(p.join(project.path, 'web-flavors'))..createSync();
       for (final name in ['prod', 'common', 'dev']) {
         Directory(p.join(flavors.path, name)).createSync();
       }
@@ -134,8 +135,7 @@ void main() {
     test('strips prefix and ignores the rest', () {
       final project = Directory.systemTemp.createTempSync('web_flavors_test.');
       addTearDown(() => project.deleteSync(recursive: true));
-      final flavors = Directory(p.join(project.path, 'web-flavors'))
-        ..createSync();
+      final flavors = Directory(p.join(project.path, 'web-flavors'))..createSync();
       for (final name in ['web-prod', 'web-common', 'web-', 'unrelated']) {
         Directory(p.join(flavors.path, name)).createSync();
       }
@@ -161,7 +161,9 @@ void main() {
     });
 
     tearDown(() {
-      if (project.existsSync()) project.deleteSync(recursive: true);
+      if (project.existsSync()) {
+        project.deleteSync(recursive: true);
+      }
     });
 
     test('overlays the prefixed flavor on unprefixed common', () {
@@ -199,7 +201,7 @@ void main() {
         ),
         throwsA(
           isA<UsageException>().having(
-            (e) => e.message,
+            (final e) => e.message,
             'message',
             allOf(
               contains('web-prod'),
@@ -225,7 +227,7 @@ void main() {
         ),
         throwsA(
           isA<UsageException>().having(
-            (e) => e.message,
+            (final e) => e.message,
             'message',
             contains('No flavors found.'),
           ),
@@ -246,7 +248,7 @@ void main() {
         ),
         throwsA(
           isA<UsageException>().having(
-            (e) => e.message,
+            (final e) => e.message,
             'message',
             contains('output directory'),
           ),
@@ -257,11 +259,11 @@ void main() {
 }
 
 extension on Directory {
-  File childFile(String name) => File(p.join(path, name));
+  File childFile(final String name) => File(p.join(path, name));
 }
 
-void _writeFile(Directory flavorsDir, String relative, String content) {
-  final file = File(p.join(flavorsDir.path, relative))
-    ..createSync(recursive: true);
-  file.writeAsStringSync(content);
+void _writeFile(final Directory flavorsDir, final String relative, final String content) {
+  File(p.join(flavorsDir.path, relative))
+    ..createSync(recursive: true)
+    ..writeAsStringSync(content);
 }
