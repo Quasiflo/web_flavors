@@ -600,4 +600,4 @@ url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/wind
 version = "1.38.0"
 backend = "pipx:yamllint"
 specifiers = ["1.38.0"]
-uv = { path = "mise/locks/pipx-yamllint/1.38.0", digest = "sha256:eafc9e9f66d297a8e3222ae5271ea5be9afb512802f272632af4035bddbee735" }
+uv = { path = "mise/locks/pipx-yamllint/1.38.0", digest = "sha256:da95d95c985f02dda36eaac428e92d3e92734d68431222430ad5be8d718034a0" }
