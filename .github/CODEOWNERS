@@ -5,7 +5,7 @@ CHANGELOG.md
 .github/workflows/release-please.yml
 .github/renovate.json5
 .config/rp-manifest.json
-.config/templatry.json
+.config/templatry.toml
 .config/version.pkl
 .config/hk.pkl
 .config/mise/**
