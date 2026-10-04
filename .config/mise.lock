@@ -140,9 +140,9 @@ url = "https://github.com/jdx/hk/releases/download/v2.2.0/hk-aarch64-unknown-lin
 url_api = "https://api.github.com/repos/jdx/hk/releases/assets/587160956"
 
 [tools."aqua:jdx/hk"."platforms.linux-arm64-musl"]
-checksum = "sha256:7914940ab8ebbdfcda2a4315e9efbc419d1c65828d26be04310362649aa47162"
-url = "https://github.com/jdx/hk/releases/download/v2.2.0/hk-aarch64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/jdx/hk/releases/assets/587160958"
+checksum = "sha256:8f6f86adae8d9b40ce47815af1b7a2f43a5b02d8abda7a831c8fcb9d5619e878"
+url = "https://github.com/jdx/hk/releases/download/v2.2.0/hk-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/587160956"
 
 [tools."aqua:jdx/hk"."platforms.linux-x64"]
 checksum = "sha256:ffb90603d1aeb6c545ff64087372c136d46bb6d820164d63b352b1c189f40053"
@@ -150,9 +150,9 @@ url = "https://github.com/jdx/hk/releases/download/v2.2.0/hk-x86_64-unknown-linu
 url_api = "https://api.github.com/repos/jdx/hk/releases/assets/587160975"
 
 [tools."aqua:jdx/hk"."platforms.linux-x64-musl"]
-checksum = "sha256:bf359f72335b99c872d7de28ccdd51cea2e5311c9200414a2409d5bfcd06c595"
-url = "https://github.com/jdx/hk/releases/download/v2.2.0/hk-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/jdx/hk/releases/assets/587160979"
+checksum = "sha256:ffb90603d1aeb6c545ff64087372c136d46bb6d820164d63b352b1c189f40053"
+url = "https://github.com/jdx/hk/releases/download/v2.2.0/hk-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/587160975"
 
 [tools."aqua:jdx/hk"."platforms.macos-arm64"]
 checksum = "sha256:82da7ae00554222568ea4115939e13fca640c2fae426ea828176b5b08ea45f68"
@@ -572,29 +572,29 @@ url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/552067
 provenance = "github-attestations"
 
 [[tools."http:flutter"]]
-version = "3.47.5"
+version = "3.47.6"
 backend = "http:flutter"
-specifiers = ["3.47.5"]
+specifiers = ["3.47.6"]
 
 [tools."http:flutter"."platforms.linux-x64"]
-checksum = "sha256:2132e990f236f8d22e7c6314b29a191a95b10d7cbcfec9b4e2e303d996652cbb"
-url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.47.5-stable.tar.xz"
+checksum = "sha256:f1631b9c2c8b3529323db412b0d1beacf4a748f8783b0d7cf599a8fd5f461675"
+url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.47.6-stable.tar.xz"
 
 [tools."http:flutter"."platforms.linux-x64-musl"]
-checksum = "sha256:2132e990f236f8d22e7c6314b29a191a95b10d7cbcfec9b4e2e303d996652cbb"
-url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.47.5-stable.tar.xz"
+checksum = "sha256:f1631b9c2c8b3529323db412b0d1beacf4a748f8783b0d7cf599a8fd5f461675"
+url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.47.6-stable.tar.xz"
 
 [tools."http:flutter"."platforms.macos-arm64"]
-checksum = "sha256:d4dd908b5f8f65515831b6d68ae33307a813f2b68947dded7a1994ee5ea7cead"
-url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_arm64_3.47.5-stable.zip"
+checksum = "sha256:a1946d3b6b3de15ce247dc89649df9035ce29e6b4e7ebe91919a25890ea2e79a"
+url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_arm64_3.47.6-stable.zip"
 
 [tools."http:flutter"."platforms.macos-x64"]
-checksum = "sha256:a7893bb0feecd8bd066f4f7e850356f896a6fc3b862e6c506d21c76691a66b72"
-url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_3.47.5-stable.zip"
+checksum = "sha256:f1f68c777b2b34153e1631670445efbeb218f42a398be32bba2051476719b0a4"
+url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_3.47.6-stable.zip"
 
 [tools."http:flutter"."platforms.windows-x64"]
-checksum = "sha256:0ccd71931f49c2fbe394b1eeb6d79af3d624058a043ea0d03d34160581624fb8"
-url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_3.47.5-stable.zip"
+checksum = "sha256:a01bb0d26de91bc23c97cd9ccfaad281a612fb8304213fdd5df1119a09404796"
+url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_3.47.6-stable.zip"
 
 [[tools."pipx:yamllint"]]
 version = "1.38.0"
